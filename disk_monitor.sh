@@ -42,4 +42,22 @@ analysis() {
 
   echo "=== Disk Usage Report ==="
 
-  for 
+  for DIR in "$@" # directories in all arguments
+      size_bytes=$(du -sb "$DIR" | cut -f1) # prints disk usage in bytes
+      size_human=$(du -sh "$DIR" | cut -f1) # prints disk usage in human readable
+
+
+      percent=$((size / total)) # change later, tentative
+}
+# fix/add to this portion
+
+# ========== Output ==========
+
+if [ "$percentage" -ge "$THRESHOLD" ]; then
+    echo "$DIR     $size_human [WARINING: exceeds ${THRESHOLD}% threshold.]" # if percent exceeds threshold
+    warnings=$((warnings+1))
+
+else
+    echo "$DIR     $size_human" # if percent doesn't exceed threshold
+fi
+# revise if loop ^^
