@@ -7,6 +7,7 @@ Total_size=0
 Warnings=0
 Checked=0
 DIRECTORY=2
+results=""
 
 validate() {
   if [ "$#" -lt 2 ]; then
@@ -38,14 +39,17 @@ analysis() {
 
   for DIR in "$@"
   do # directories in all arguments
+      if [ ! -d "$DIR" ]; then
+	  continue
+      fi
 
-    size_bytes=$(du -sb "$DIR" | cut -f1) # prints directory disk usage in bytes
+    size_kbytes=$(du -sk "$DIR" | cut -f1) # prints directory disk usage in bytes
 
     size_human=$(du -sh "$DIR" | cut -f1) # prints directory disk usage in human readable
 
-    total=$(df -h "$DIR" | tail -1) # prints human readable disk filesystem size
+    total=$(df "$DIR" | awk 'NR==2 {print $2}')) # prints filesystem size in kilobytes
 
-    percent=$((size_bytes * 100 / total)) # change later, tentative
+    percent=$((size_kbytes * 100 / total)) # change later, tentative
     
     if [ "$percent" -ge "$THRESHOLD" ]; then
 	echo "$DIR     $size_human [WARINING: exceeds ${THRESHOLD}% threshold.]" # if percent exceeds threshold
@@ -54,19 +58,22 @@ analysis() {
 	echo "$DIR     $size_human"
     fi
 
-    Total_size=$((Total_size + size_bytes))
+    results+="$size_kbytes|$DIR|$size_human|$Warning"$'\n'
+
+    Total_size=$((Total_size + size_kbytes))
     Checked=$((Checked + 1))
 
-  done
+done
+
+echo "$results" | sort -t'|' -nr -k1 | awk -F'|' '{print $2, $3, $4}'
 
   }
-
 
 # ========== Main Pipeline ==========
 
 validate "$@"
 analysis "$@"
 
-echo "Total: $total"
+echo "Total: ${Total_size}K"
 echo "Directories Checked: $Checked"
 echo "Warnings: $Warnings"
