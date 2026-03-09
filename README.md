@@ -9,13 +9,13 @@ This project monitors disk usage by checking how much storage is left on it, and
 # Usage:
 ./disk_monitor.sh 80 tmp/ directory/data
 
-# Example output:
+## Example output:
 /tmp 	    	 350M
 /directory/data  20G    [Warning: exceeds 80% threshold]
 
-# Dependencies
+## Dependencies
 This script uses standard Unix commands, so there are no other external libraries or packages required.
 
 
-# AI assistance
+## AI assistance
 I used AI to assist with picking the correct options for commands, like the -sk option for du to get the size in kilobytes. I also used AI to help me define the "results" variable that holds the information from the analysis loop.
