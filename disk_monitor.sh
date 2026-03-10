@@ -71,7 +71,8 @@ analysis() {
 
   # Sort results by size and print
   echo "$results" | sort -t'|' -nr -k1 | while IFS="|" read size dir human percent warn; do
-      echo "$dir     $human ${percent}% $warn"
+      [ -z "$dir" ] && continue
+      printf "%-40s %8s %4s%% %s\n" "$dir" "$human" "$percent" "$warn"
   done
 }
 
